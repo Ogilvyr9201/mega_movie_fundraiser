@@ -14,3 +14,5 @@ def not_blank(question, error):
 
 # Main routine
 name = not_blank("Name: ", "<error> please enter your name")
+print()
+print(name)
