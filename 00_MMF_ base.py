@@ -18,5 +18,5 @@ def not_blank(question, error):
 
 # main routine
 
-# ask user for there name
+# ask user for name 
 name = not_blank("Name: ", "<error> please enter your name")
