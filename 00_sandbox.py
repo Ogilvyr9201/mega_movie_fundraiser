@@ -1,3 +1,2 @@
-text = input('write -> ')
-check = str.isspace(text)
-print(check)
+print("bruh \n"
+"new line")
