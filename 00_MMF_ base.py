@@ -55,8 +55,7 @@ def num_check(question, error, num_type, exit_code=None, low=None, high=None):
 
 
 # main routine
-
-# ask user for name 
+profit = 0
 name = ""
 count = 0
 max_tickets = 5
@@ -64,7 +63,7 @@ max_tickets = 5
 # loop code where it asks user for details
 while name != "xxx"  and count < max_tickets:
 
-    # Get details
+    # ask user for name 
     name = not_blank("Name: ", "<error> please enter your name")
 
     if name == "xxx":
@@ -77,13 +76,27 @@ while name != "xxx"  and count < max_tickets:
     # checks if users age is between the perameters 
     if age < 12:
         print("Only those who are above 12 years old can purchase a ticket \n"
-        "Sorry for your inconvenience.")
+        "Sorry for the inconvenience.")
         print()
         continue
     elif age > 130:
         print("Are you really that old??")
         print()
         continue
+
+        # finds out ticket price 
+    if age > 64:
+        ticket_price = 6.5
+    elif age < 16:
+        ticket_price = 7.5
+    else:
+        ticket_price = 10.5
+
+    # figures out profit 
+    profit_made = ticket_price - 5
+    profit += profit_made
+
+    print("Ticket Price: ${:.2f} ".format(ticket_price))
 
     # calculate tickets left
     count += 1
@@ -105,3 +118,7 @@ else:
     print("You sold {} tickets.".format(count))
     print("{} spaces remain.".format(tickets_left))
 print()
+
+# shos profit made 
+print("Profit: {:.2f}".format(profit))
+
