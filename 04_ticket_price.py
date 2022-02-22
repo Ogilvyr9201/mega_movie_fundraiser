@@ -42,7 +42,7 @@ def num_check(question, error, num_type, exit_code=None, low=None, high=None):
 
 
 # main routine
-total_ticket_cost = 0
+profit = 0
 # ask user for there age
 
 while 1 == 1:
@@ -66,9 +66,11 @@ while 1 == 1:
         ticket_price = 7.5
     else:
         ticket_price = 10.5
-    
-    total_ticket_cost += ticket_price
+
+    # figures out profit 
+    profit_made = ticket_price - 5
+    profit += profit_made
 
     print("Ticket Price: ${:.2f} ".format(ticket_price))
     print()
-    print("Total: {}".format(total_ticket_cost))
+    print("Profit: {:.2f}".format(profit))

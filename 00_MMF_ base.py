@@ -15,7 +15,7 @@ def not_blank(question, error):
             return response
 
 
-# Number checker that checks users input for any scenario
+# Number checker that checks users input for any scenario From last years code
 def num_check(question, error, num_type, exit_code=None, low=None, high=None):
 
     valid = False
@@ -54,14 +54,16 @@ def num_check(question, error, num_type, exit_code=None, low=None, high=None):
 
 
 
-# main routine
-profit = 0
+# *** main routine ***
+max_tickets = 5
+
 name = ""
-count = 0
+ticket_count = 0
+ticket_sales = 0
 max_tickets = 5
 
 # loop code where it asks user for details
-while name != "xxx"  and count < max_tickets:
+while name != "xxx"  and ticket_count < max_tickets:
 
     # ask user for name 
     name = not_blank("Name: ", "<error> please enter your name")
@@ -84,29 +86,31 @@ while name != "xxx"  and count < max_tickets:
         print()
         continue
 
-        # finds out ticket price 
+    # finds out ticket price 
     if age > 64:
         ticket_price = 6.5
     elif age < 16:
         ticket_price = 7.5
     else:
         ticket_price = 10.5
-
-    # figures out profit 
-    profit_made = ticket_price - 5
-    profit += profit_made
+    
+    # totals the ticket sales
+    ticket_sales += ticket_price
 
     print("Ticket Price: ${:.2f} ".format(ticket_price))
 
     # calculate tickets left
-    count += 1
-    tickets_left = max_tickets - count
+    ticket_count += 1
+    tickets_left = max_tickets - ticket_count
     # checks if there is only 1 space left
     if tickets_left == 1:
         print("THERE IS ONE SPACE LEFT!")
     else:
         print("You have {} seats left".format(tickets_left))
     print()
+
+# figures out profit out side of loop
+tiket_profit = ticket_sales - (5 * ticket_count)
 
 # Print results of loop
 # if youve sold put it prints that
@@ -115,10 +119,10 @@ if tickets_left == 0:
 
 # if you have not sold out it tells you how many sold and left
 else:
-    print("You sold {} tickets.".format(count))
+    print("You sold {} tickets.".format(ticket_count))
     print("{} spaces remain.".format(tickets_left))
 print()
 
 # shos profit made 
-print("Profit: {:.2f}".format(profit))
+print("Profit: {:.2f}".format(tiket_profit))
 
