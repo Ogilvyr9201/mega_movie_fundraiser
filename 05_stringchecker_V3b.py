@@ -1,3 +1,6 @@
+import re
+
+
 # functions
 
 
@@ -21,8 +24,10 @@ def string_checker(question, error, options):
 
 
 # main routine
-# errors list
+# regular expression to find if item starts with a number
+number_regex = "^[1-9]"
 
+# errors list
 snack_error = "<error> Please enter 1 of the 4 snack options."
 yes_no_error ="<error> please enter yes or no."
 
@@ -76,6 +81,8 @@ while check_snack == "invalid choice":
             print("Chosen snack: {}".format(desired_snack))
 
         print()
+        print("Snacks Ordered:")
         for item in snack_order:
-            print("Snacks Ordered:")
             print(item)
+
+    
