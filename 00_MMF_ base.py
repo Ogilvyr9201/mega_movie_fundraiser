@@ -1,3 +1,5 @@
+
+
 import re
 import pandas
 # functions go here
@@ -277,4 +279,3 @@ print()
 
 # shos profit made 
 print("Profit: {:.2f}".format(tiket_profit))
-
