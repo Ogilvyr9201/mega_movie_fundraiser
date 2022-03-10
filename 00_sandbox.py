@@ -1,8 +1,8 @@
 import random
 # random answers
-answer_list = ["yes", "no", "ofc", "No you're dumb", "sure", 
-"absolutly", "absolutly not", "nope", "dude just stop talking", "maybe", 
-"good question", "i don't really know", "lol"]
+answer_list = ["OJ", "June", "Beniju", "Sir Tag", "Clash with Ash", 
+"Kent", "ClashArt", "YoSoyRick", "Grax", "Jojonas", 
+"Ouahleouff", "Artube Clash", "lol"]
 
 # main routine
 while 1 == 1:
