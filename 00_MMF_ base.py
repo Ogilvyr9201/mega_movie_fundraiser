@@ -1,5 +1,3 @@
-
-
 import re
 import pandas
 # functions go here
@@ -84,10 +82,10 @@ def get_snack():
     # a list of all the snacks and valid responses to order snacks
     valid_snacks = [
         ["popcorn", "p", "corn", "a"],
-        ["M&M's", "m&m's", "mms", "m", "b"],
+        ["M&Ms","M&M's", "m&m's", "mms", "m", "b"],
         ["pita chips", "chips", "pc", "pita", "c"],
         ["water", "w", "d"],
-        ["orange juice", "oj",  "o", "juice", "e"],
+        ["orange juice", "oj",  "o", "juice", "e", "tenthplace"]
     ]
 
     desired_snack = ""
@@ -180,7 +178,7 @@ number_regex = "^[1-9]"
 
 # errors list
 snack_error = "<error> Please enter 1 of the 4 snack options."
-yes_no_error ="<error> please enter yes or no."
+yes_no_error = "<error> please enter yes or no."
 
 # yes no list
 yes_no_list = [
@@ -201,10 +199,34 @@ ticket_sales = 0
 all_names = []
 all_tickets = []
 
+popcorn = []
+mms = []
+pita_chips = []
+water = []
+orange_juice = []
+
+snack_lists = [popcorn, mms, pita_chips, water, orange_juice]
+
+
 # data frame dictionary
 movie_data_dict = {
     'Name': all_names,
-    'Ticket': all_tickets
+    'Tickets': all_tickets,
+    'Popcorn': popcorn,
+    'M&Ms': mms,
+    'Pita Chips': pita_chips,
+    'Water': water,
+    'Orange Juice': orange_juice
+    
+}
+
+# price dictionary
+price_dict = {
+    'Popcorn': 2.5,
+    'Water': 2,
+    'Pita Chips': 4.5,
+    'M&Ms': 3,
+    'Orange Juice': 3.25
 }
 
 # loop code where it asks user for details
@@ -238,24 +260,26 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
         want_snacks = input("Do you want snacks?  ").lower()
         check_snack = string_checker(want_snacks, yes_no_error, yes_no_list)
 
+        # gets order if they want one
         if check_snack == "Yes":
             get_order = get_snack()
         
         else:
             get_order = []
+
+        # fill lists
+        for item in snack_lists:
+            item.append(0)
             
-        # show snack orders 
-        print()
-        if len(get_order) == 0:
-            print("Snacks Ordered: None")
+        # add stuf to the lists if they ask for an order.
+        for item in get_order:
+            if len(item) > 0:
+                to_find = (item[1])
+                amount = (item[0])
+                add_list = movie_data_dict[to_find]
+                add_list[-1] = amount
 
-        else:
-            print("Snacks Ordered:")
 
-            '''for item in snack order:
-            print item'''
-
-            print(get_order)
     
     # finds out amount of tickets left
     ticket_check(ticket_count, MAX_TICKETS)
@@ -265,8 +289,25 @@ tiket_profit = ticket_sales - (5 * ticket_count)
 
 # Print information
 movie_frame = pandas.DataFrame(movie_data_dict)
+movie_frame = movie_frame.set_index('Name')
+
+# create column called 'Sub Total'
+# fill it price for snacks and tivket
+
+movie_frame['Sub_total'] = \
+    movie_frame['Tickets'] + \
+    movie_frame['Popcorn']*price_dict['Popcorn'] + \
+    movie_frame['Water']*price_dict['Water'] + \
+    movie_frame['Pita Chips']*price_dict['Pita Chips'] + \
+    movie_frame['M&Ms']*price_dict['M&Ms'] + \
+    movie_frame['Orange Juice']*price_dict['Orange Juice']
+
+
+
+movie_frame = movie_frame.reindex(columns=['Popcorn', 'Pita Chips', 'M&Ms', 'Orange Juice', 'Water', 'Sub_total'])
 print(movie_frame)
 
+print()
 # if youve sold put it prints that
 if ticket_count == MAX_TICKETS:
     print("You have sold out")
