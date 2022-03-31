@@ -186,6 +186,12 @@ yes_no_list = [
     ["no", "n"]
 ]
 
+# list of valid response for payment method
+pay_method = [
+    ["cash", "ca"],
+    ["credit", "cr"]
+]
+
 
 # defines constants 
 MAX_TICKETS = 5
@@ -205,6 +211,8 @@ pita_chips = []
 water = []
 orange_juice = []
 
+surcharge_multi_list = []
+
 snack_lists = [popcorn, mms, pita_chips, water, orange_juice]
 
 
@@ -216,7 +224,8 @@ movie_data_dict = {
     'M&Ms': mms,
     'Pita Chips': pita_chips,
     'Water': water,
-    'Orange Juice': orange_juice
+    'Orange Juice': orange_juice,
+    'Surcharge_Multiplier': surcharge_multi_list
     
 }
 
@@ -263,10 +272,13 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
         # gets order if they want one
         if check_snack == "Yes":
             get_order = get_snack()
+
+        elif check_snack == "invalid choice":
+            continue
         
         else:
             get_order = []
-
+            
         # fill lists
         for item in snack_lists:
             item.append(0)
@@ -278,9 +290,22 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
                 amount = (item[0])
                 add_list = movie_data_dict[to_find]
                 add_list[-1] = amount
-
-
     
+    # ask user for there payment method
+    how_pay = "invalid choice"
+    while how_pay == "invalid choice":
+        how_pay = input("Please choose a payment method (cash / credit): ").lower()
+        how_pay = string_checker(how_pay, "<error> please input correct payment method.", pay_method)
+
+    # do maths to figure our surcharge
+    if how_pay == "Credit":
+        surcharge_multiplier = 0.05 
+    
+    else:
+        surcharge_multiplier = 0
+
+    surcharge_multi_list.append(surcharge_multiplier)
+
     # finds out amount of tickets left
     ticket_check(ticket_count, MAX_TICKETS)
 
@@ -292,7 +317,7 @@ movie_frame = pandas.DataFrame(movie_data_dict)
 movie_frame = movie_frame.set_index('Name')
 
 # create column called 'Sub Total'
-# fill it price for snacks and tivket
+# fill it price for snacks and ticket
 
 movie_frame['Sub_total'] = \
     movie_frame['Tickets'] + \
@@ -302,12 +327,30 @@ movie_frame['Sub_total'] = \
     movie_frame['M&Ms']*price_dict['M&Ms'] + \
     movie_frame['Orange Juice']*price_dict['Orange Juice']
 
+movie_frame["Surcharge"] = \
+    movie_frame["Sub_total"] * movie_frame["Surcharge_Multiplier"]
+
+movie_frame["Total"] = movie_frame["Sub_total"] + \
+    movie_frame['Surcharge']
+
+movie_frame = movie_frame.reindex(columns=['Popcorn', 'Pita Chips', 'M&Ms', 'Orange Juice', 'Water', 'Sub_total', 'Surcharge', 'Total'])
+
+# set max coumns to be printed..
+pandas.set_option('display.max_columns', None)
+
+#display numbers to 2 dp
+pandas.set_option('precision', 2)
 
 
-movie_frame = movie_frame.reindex(columns=['Popcorn', 'Pita Chips', 'M&Ms', 'Orange Juice', 'Water', 'Sub_total'])
-print(movie_frame)
+# ask user if they want to print all colomns
+print_all = input("Print all colomns? (y) for yes ")
+if print_all == "y":
+    print(movie_frame)
 
+else:
+    print(movie_frame[['Ticket', 'Sub Total', "Surcharge", 'Total']])    
 print()
+
 # if youve sold put it prints that
 if ticket_count == MAX_TICKETS:
     print("You have sold out")
@@ -318,5 +361,5 @@ else:
     print("{} spaces remain.".format(MAX_TICKETS - ticket_count))
 print()
 
-# shos profit made 
+# shows profit made 
 print("Profit: {:.2f}".format(tiket_profit))
