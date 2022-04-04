@@ -81,15 +81,15 @@ def get_snack():
 
     # a list of all the snacks and valid responses to order snacks
     valid_snacks = [
-        ["popcorn", "p", "corn", "a"],
-        ["M&Ms","M&M's", "m&m's", "mms", "m", "b"],
+        ["popcorn", "p", "pop", "corn", "a"],
+        ["M&Ms","M&M's", "m&m's", "mms", "m", "mm", "b"],
         ["pita chips", "chips", "pc", "pita", "c"],
-        ["water", "w", "d"],
+        ["water", "w", "h20", "d"],
         ["orange juice", "oj",  "o", "juice", "e", "tenthplace"]
     ]
 
     desired_snack = ""
-    while desired_snack != "xxx":
+    while desired_snack != "xxx" or desired_snack != "n":
 
         snack_row = []
         
@@ -97,7 +97,7 @@ def get_snack():
         desired_snack = input("Snack: ").lower()
 
         # breaks loop is exit code used 
-        if desired_snack == "xxx":
+        if desired_snack == "xxx" or desired_snack == "n":
             return snack_order
 
         # if item has a number separate it into two parts (number and item)
@@ -215,6 +215,20 @@ surcharge_multi_list = []
 
 snack_lists = [popcorn, mms, pita_chips, water, orange_juice]
 
+# lists to store sumamry data
+# summary_headings = ["Popcorn", 'M&Ms', "Pita Chips", 'Water',
+# "Orange Juice", 'Snack Profit', "ticket Price", "Total Profit"]
+
+summary_headings = ["Popcorn", 'M&Ms', "Pita Chips", 'Water',
+"Orange Juice", "Snack Profit", "ticket Price", "Total Profit"]
+
+summary_data = []
+
+# summary data dict
+summary_data_dict = {
+    'Item': summary_headings,
+    'Amount': summary_data
+}
 
 # data frame dictionary
 movie_data_dict = {
@@ -263,34 +277,22 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
     all_names.append(name)
     all_tickets.append(ticket_cost)
 
-    # ask user if they want snacks
-    check_snack = "invalid choice"
-    while check_snack == "invalid choice":
-        want_snacks = input("Do you want snacks?  ").lower()
-        check_snack = string_checker(want_snacks, yes_no_error, yes_no_list)
 
-        # gets order if they want one
-        if check_snack == "Yes":
-            get_order = get_snack()
-
-        elif check_snack == "invalid choice":
-            continue
+    # gets order if they want one
+    get_order = get_snack()
+   
+    # fill lists
+    for item in snack_lists:
+        item.append(0)
         
-        else:
-            get_order = []
-            
-        # fill lists
-        for item in snack_lists:
-            item.append(0)
-            
-        # add stuf to the lists if they ask for an order.
-        for item in get_order:
-            if len(item) > 0:
-                to_find = (item[1])
-                amount = (item[0])
-                add_list = movie_data_dict[to_find]
-                add_list[-1] = amount
-    
+    # add stuf to the lists if they ask for an order.
+    for item in get_order:
+        if len(item) > 0:
+            to_find = (item[1])
+            amount = (item[0])
+            add_list = movie_data_dict[to_find]
+            add_list[-1] = amount
+
     # ask user for there payment method
     how_pay = "invalid choice"
     while how_pay == "invalid choice":
@@ -309,9 +311,6 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
     # finds out amount of tickets left
     ticket_check(ticket_count, MAX_TICKETS)
 
-# figures out profit out side of loop
-tiket_profit = ticket_sales - (5 * ticket_count)
-
 # Print information
 movie_frame = pandas.DataFrame(movie_data_dict)
 movie_frame = movie_frame.set_index('Name')
@@ -319,39 +318,69 @@ movie_frame = movie_frame.set_index('Name')
 # create column called 'Sub Total'
 # fill it price for snacks and ticket
 
-movie_frame['Sub_total'] = \
-    movie_frame['Tickets'] + \
+movie_frame["Snacks"] = \
     movie_frame['Popcorn']*price_dict['Popcorn'] + \
     movie_frame['Water']*price_dict['Water'] + \
     movie_frame['Pita Chips']*price_dict['Pita Chips'] + \
     movie_frame['M&Ms']*price_dict['M&Ms'] + \
     movie_frame['Orange Juice']*price_dict['Orange Juice']
 
-movie_frame["Surcharge"] = \
-    movie_frame["Sub_total"] * movie_frame["Surcharge_Multiplier"]
 
-movie_frame["Total"] = movie_frame["Sub_total"] + \
+movie_frame["Sub total"] = \
+    movie_frame['Tickets'] + \
+    movie_frame['Snacks']
+
+movie_frame["Surcharge"] = \
+    movie_frame["Sub total"] * movie_frame["Surcharge_Multiplier"]
+
+movie_frame["Total"] = movie_frame["Sub total"] + \
     movie_frame['Surcharge']
 
-movie_frame = movie_frame.reindex(columns=['Popcorn', 'Pita Chips', 'M&Ms', 'Orange Juice', 'Water', 'Sub_total', 'Surcharge', 'Total'])
+movie_frame = movie_frame.reindex(columns=['Tickets', 'Snacks', 'Popcorn', 'Pita Chips', 'M&Ms', 'Orange Juice', 'Water', 'Sub total', 'Surcharge', 'Total'])
+
+
+# set up summary dataframe
+# populate snack items...
+for item in snack_lists:
+    # sum itmer in each snack list 
+    summary_data.append(sum(item))
+
+# Get snack Profit
+# Get snack total from panda
+snack_total = movie_frame['Snacks'].sum()
+snack_profit = snack_total * 0.2
+summary_data.append(snack_profit)
+
+# figures out profit out side of loop
+tiket_profit = ticket_sales - (5 * ticket_count)
+summary_data.append(tiket_profit)
+
+# figures out total profit 
+total_profit = snack_profit + tiket_profit
+summary_data.append(total_profit)
+
+# create summar frame
+summary_frame = pandas.DataFrame(summary_data_dict)
+summary_frame = summary_frame.set_index('Item')
 
 # set max coumns to be printed..
 pandas.set_option('display.max_columns', None)
 
-#display numbers to 2 dp
+# display numbers to 2 dp
 pandas.set_option('precision', 2)
 
-
-# ask user if they want to print all colomns
-print_all = input("Print all colomns? (y) for yes ")
-if print_all == "y":
-    print(movie_frame)
-
-else:
-    print(movie_frame[['Ticket', 'Sub Total', "Surcharge", 'Total']])    
+print()
+print("*** Ticket / Snack Information ***")
+print("Note: For full details please see the excel file called ")
+print()
+print(movie_frame[['Tickets', 'Snacks', 'Sub total', "Surcharge", 'Total']])
 print()
 
-# if youve sold put it prints that
+print('*** Snack / Profit Sumamry ***')
+print()
+print(summary_frame)
+
+# if you've sold put it prints that
 if ticket_count == MAX_TICKETS:
     print("You have sold out")
 
