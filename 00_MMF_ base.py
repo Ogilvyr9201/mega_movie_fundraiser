@@ -271,6 +271,7 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
         # totals the ticket sales
         ticket_sales += ticket_cost
         print("Ticket Price: ${:.2f} ".format(ticket_cost))
+        print()
         ticket_count += 1
 
     # adds name and ticket price to the initail listd
@@ -280,6 +281,7 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
 
     # gets order if they want one
     get_order = get_snack()
+    print()
    
     # fill lists
     for item in snack_lists:
@@ -310,6 +312,7 @@ while name != "xxx" and ticket_count < MAX_TICKETS:
 
     # finds out amount of tickets left
     ticket_check(ticket_count, MAX_TICKETS)
+    print()
 
 # Print information
 movie_frame = pandas.DataFrame(movie_data_dict)
@@ -379,6 +382,7 @@ print()
 print('*** Snack / Profit Sumamry ***')
 print()
 print(summary_frame)
+print()
 
 # if you've sold put it prints that
 if ticket_count == MAX_TICKETS:
